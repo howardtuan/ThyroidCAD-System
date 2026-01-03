@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>{{ title }}</title>
+  <style>
+    body { font-family: system-ui, -apple-system, "Segoe UI", Arial; margin: 24px; }
+    .wrap { max-width: 1100px; margin: 0 auto; }
+    .title { font-size: 28px; font-weight: 800; margin-bottom: 14px; }
+    .panel { border: 1px solid #ddd; border-radius: 12px; padding: 16px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .imgbox { border: 1px solid #eee; border-radius: 12px; padding: 12px; background:#fafafa;}
+    img { width: 100%; height: auto; border-radius: 10px; }
+    .tag { display:inline-block; padding:8px 12px; border-radius:999px; font-weight:800; }
+    .tag-ok { background:#dcfce7; color:#166534; }
+    .tag-warn { background:#fee2e2; color:#991b1b; }
+    .tag-neutral { background:#e5e7eb; color:#111827; }
+    .row { display:flex; gap:12px; flex-wrap: wrap; align-items:center; }
+    .btn { padding: 10px 14px; border: 0; border-radius: 10px; cursor: pointer; font-weight: 700; background:#1f6feb; color:#fff; text-decoration:none; display:inline-block;}
+    .small { color:#444; line-height:1.7; }
+    .kv { margin-top:10px; color:#333; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="title">{{ title }}</div>
+
+    <div class="panel">
+      <div class="row" style="justify-content:space-between;">
+        <div class="small">{{ message }}</div>
+        <a class="btn" href="{{ url_for('index') }}">返回首頁</a>
+      </div>
+
+      <hr style="margin:14px 0;">
+
+      <div class="grid">
+        <div class="imgbox">
+          <div class="small" style="font-weight:800; margin-bottom:8px;">左：原始影像 / 偵測結果</div>
+          <img src="{{ left }}" alt="left">
+        </div>
+
+        <div class="imgbox">
+          <div class="small" style="font-weight:800; margin-bottom:8px;">右：分割結果（半透明遮罩）</div>
+          {% if right %}
+            <img src="{{ right }}" alt="right">
+          {% else %}
+            <div class="small">（未執行分割：偵測不到結節時直接回傳正常結果）</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <hr style="margin:14px 0;">
+
+      {% if status == "normal" %}
+        <div class="row">
+          <span class="tag tag-neutral">預測結果：正常甲狀腺</span>
+        </div>
+      {% else %}
+        <div class="row">
+          {% if cls.pred_label == "惡性" %}
+            <span class="tag tag-warn">分類結果：惡性（{{ "%.3f"|format(cls.confidence) }}）</span>
+          {% else %}
+            <span class="tag tag-ok">分類結果：良性（{{ "%.3f"|format(cls.confidence) }}）</span>
+          {% endif %}
+        </div>
+
+        <div class="kv small">
+          <div>偵測最佳框 conf：{{ "%.3f"|format(det.conf) }}；bbox(x1,y1,x2,y2)：{{ det.xyxy }}</div>
+          <div>分類機率：良性 {{ "%.3f"|format(cls.prob_benign) }} ／ 惡性 {{ "%.3f"|format(cls.prob_malignant) }}</div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</body>
+</html>

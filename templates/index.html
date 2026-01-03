@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>{{ title }}</title>
+  <style>
+    body { font-family: system-ui, -apple-system, "Segoe UI", Arial; margin: 24px; }
+    .wrap { max-width: 980px; margin: 0 auto; }
+    .title { font-size: 28px; font-weight: 800; margin-bottom: 14px; }
+    .hint { color: #444; line-height: 1.7; margin-bottom: 18px; }
+    .panel { border: 1px solid #ddd; border-radius: 12px; padding: 16px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
+    .imgbox { border: 1px dashed #bbb; border-radius: 12px; padding: 12px; min-height: 360px; display:flex; align-items:center; justify-content:center; background:#fafafa;}
+    img { max-width: 100%; height: auto; border-radius: 10px; }
+    .btn { padding: 10px 14px; border: 0; border-radius: 10px; cursor: pointer; font-weight: 700; }
+    .btn-primary { background: #1f6feb; color: white; }
+    .btn-ok { background: #16a34a; color: white; }
+    .btn-ghost { background: #eee; color: #111; }
+    .row { display:flex; gap:10px; flex-wrap: wrap; align-items:center; margin-top: 10px; }
+    .flash { background:#fff3cd; border:1px solid #ffe69c; padding:10px 12px; border-radius:10px; margin: 10px 0; }
+    .small { font-size: 13px; color:#555; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="title">{{ title }}</div>
+    <div class="hint">
+      上傳單張甲狀腺超音波影像後，系統會先顯示預覽供人工確認；確認無誤後按下「執行診斷」，系統將依序進行結節偵測、ROI 分類與整圖分割，並在單一畫面中呈現結果。
+    </div>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="flash">
+          {% for m in messages %}
+            <div>{{ m }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <div class="panel">
+      <div class="grid">
+        <div>
+          <h3>影像上傳</h3>
+          <form action="{{ url_for('upload') }}" method="post" enctype="multipart/form-data">
+            <input type="file" name="file" accept="image/*" required/>
+            <div class="row">
+              <button class="btn btn-primary" type="submit">上傳影像</button>
+              <a class="btn btn-ghost" href="{{ url_for('reset') }}" style="text-decoration:none; display:inline-block;">重設</a>
+            </div>
+            <div class="small" style="margin-top:8px;">支援：jpg / png / bmp / webp</div>
+          </form>
+
+          {% if uploaded_image %}
+            <hr style="margin:16px 0;">
+            <h3>人工確認</h3>
+            <div class="small">請先確認左側預覽影像是否正確，再啟動推論流程。</div>
+            <form action="{{ url_for('infer') }}" method="post" class="row" style="margin-top:10px;">
+              <input type="hidden" name="filename" value="{{ uploaded_filename }}"/>
+              <button class="btn btn-ok" type="submit">執行診斷</button>
+            </form>
+          {% endif %}
+        </div>
+
+        <div>
+          <h3>影像預覽</h3>
+          <div class="imgbox">
+            {% if uploaded_image %}
+              <img src="{{ uploaded_image }}" alt="preview">
+            {% else %}
+              <div class="small">尚未上傳影像</div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>
