@@ -1,0 +1,4 @@
+venv/
+det_yolo11l_best.pt
+resnet50_best.pth
+seg_yolox_best.pt
