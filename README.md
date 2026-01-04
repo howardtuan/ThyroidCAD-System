@@ -45,6 +45,7 @@ ThyroidCAD-System 是一套以深度學習為核心的 甲狀腺超音波影像�
     * resnet50_best.pth
 * 分類僅針對 偵測後裁切之 ROI 區域 進行推論
 
+## 專案目錄結構
 ```bash
 ThyroidCAD-System/
 ├─ app.py
@@ -64,28 +65,28 @@ ThyroidCAD-System/
    └─ result.html
 ```
 
-### 安裝與執行方式
-## 1. 建立虛擬環境（建議）
+## 安裝與執行方式
+### 1. 建立虛擬環境（建議）
 ```bash
 python -m venv venv
 source venv/bin/activate   # macOS / Linux
 venv\Scripts\activate      # Windows
 ```
-## 2. 安裝套件
+### 2. 安裝套件
 ```bash
 pip install -r requirements.txt
 ```
-## 3. 確認權重檔案
+### 3. 確認權重檔案
 請將以下模型權重放置於 weights/ 目錄中：
 * det_yolo11l_best.pt
 * seg_yolox_best.pt
 * resnet50_best.pth
 
-## 4. 啟動系統
+### 4. 啟動系統
 ```bash
 python app.py
 ```
-## 啟動後，於瀏覽器開啟：
+### 啟動後，於瀏覽器開啟：
 ```bash
 http://127.0.0.1:5001
 ```
